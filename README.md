@@ -31,7 +31,7 @@ PR / push (andra branscher)         push till main
 
 ## Tekniska val
 - **Tester** med inbyggda `node:test` – inga extra beroenden, snabb pipeline.
-- **Docker**: `node:20-alpine`, körs som icke-root-användare, har `HEALTHCHECK`.
+- **Docker**: `node:24-alpine` (npm borttaget ur runtime-imagen), körs som icke-root-användare, har `HEALTHCHECK`.
 - **Spårbarhet**: varje image taggas med commit-SHA och får den som `APP_VERSION` (syns på `/`).
 - **Säkerhet**: CodeQL + Trivy i pipelinen, Dependabot uppdaterar Actions, Docker-basimage och npm varje vecka.
 - **Cache** av Docker-lager via GitHub Actions cache.
