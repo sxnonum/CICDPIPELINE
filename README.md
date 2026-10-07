@@ -1,11 +1,10 @@
 # CI/CD Pipeline – GitHub Actions + Docker
 
-[![CI](https://github.com/sxnonum/CICDPIPELINE/actions/workflows/ci.yml/badge.svg)](https://github.com/sxnonum/CICDPIPELINE/actions/workflows/ci.yml)
-[![CD](https://github.com/sxnonum/CICDPIPELINE/actions/workflows/deploy.yml/badge.svg)](https://github.com/sxnonum/CICDPIPELINE/actions/workflows/deploy.yml)
+[![CI](https://github.com/sxnonum/CICDPIPELINE/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sxnonum/CICDPIPELINE/actions/workflows/ci.yml) [![Security](https://github.com/sxnonum/CICDPIPELINE/actions/workflows/security.yml/badge.svg?branch=main&event=push)](https://github.com/sxnonum/CICDPIPELINE/actions/workflows/security.yml) [![CD](https://github.com/sxnonum/CICDPIPELINE/actions/workflows/deploy.yml/badge.svg?branch=main&event=push)](https://github.com/sxnonum/CICDPIPELINE/actions/workflows/deploy.yml)
+
 
 En pipeline som automatiskt testar, bygger och levererar en liten Node.js-app som Docker-image.
 Appen är medvetet enkel (inga beroenden) – fokus ligger på automatiseringen.
-[![Security](https://github.com/sxnonum/CICDPIPELINE/actions/workflows/security.yml/badge.svg)](https://github.com/sxnonum/CICDPIPELINE/actions/workflows/security.yml)
 
 ## Pipeline
 
