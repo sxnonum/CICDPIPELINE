@@ -1,4 +1,4 @@
-FROM node:24-alpine
+FROM node:26-alpine
 ENV NODE_ENV=production
 WORKDIR /app
 # Appen har inga beroenden, så npm/npx behövs inte i runtime-imagen (mindre attackyta)
