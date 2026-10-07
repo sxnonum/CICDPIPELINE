@@ -5,6 +5,7 @@
 
 En pipeline som automatiskt testar, bygger och levererar en liten Node.js-app som Docker-image.
 Appen är medvetet enkel (inga beroenden) – fokus ligger på automatiseringen.
+[![Security](https://github.com/sxnonum/CICDPIPELINE/actions/workflows/security.yml/badge.svg)](https://github.com/sxnonum/CICDPIPELINE/actions/workflows/security.yml)
 
 ## Pipeline
 
@@ -25,12 +26,14 @@ PR / push (andra branscher)         push till main
 | Workflow | Trigger | Vad den gör |
 |---|---|---|
 | [`ci.yml`](.github/workflows/ci.yml) | PR, push till andra branscher än `main` | Kör tester, bygger imagen och startar containern för ett smoke test mot `/health` |
+| [`security.yml`](.github/workflows/security.yml) | PR, push till `main`, varje måndag | CodeQL-analys av koden och Trivy-skanning av Docker-imagen (CRITICAL/HIGH) |
 | [`deploy.yml`](.github/workflows/deploy.yml) | push till `main` | Kör tester, publicerar imagen till GitHub Container Registry, deployar via SSH om `DEPLOY_ENABLED=true` |
 
 ## Tekniska val
 - **Tester** med inbyggda `node:test` – inga extra beroenden, snabb pipeline.
 - **Docker**: `node:20-alpine`, körs som icke-root-användare, har `HEALTHCHECK`.
 - **Spårbarhet**: varje image taggas med commit-SHA och får den som `APP_VERSION` (syns på `/`).
+- **Säkerhet**: CodeQL + Trivy i pipelinen, Dependabot uppdaterar Actions, Docker-basimage och npm varje vecka.
 - **Cache** av Docker-lager via GitHub Actions cache.
 - **Concurrency-lås** så att två deployer aldrig körs samtidigt.
 - **Minsta möjliga rättigheter** (`permissions`) per jobb.
