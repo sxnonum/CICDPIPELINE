@@ -1,0 +1,12 @@
+{
+  "name": "cicd-pipeline-demo",
+  "version": "1.0.0",
+  "description": "Demo-app med CI/CD via GitHub Actions + Docker",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": { "node": ">=20" },
+  "license": "MIT"
+}
