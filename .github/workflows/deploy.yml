@@ -48,6 +48,8 @@ jobs:
 
   deploy:
     needs: publish
+    # Valfritt steg: körs bara om repo-variabeln DEPLOY_ENABLED=true är satt
+    if: ${{ vars.DEPLOY_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     environment: production
     steps:

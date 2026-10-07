@@ -1,21 +1,47 @@
-# CI/CD-pipeline med GitHub Actions + Docker
+# CI/CD Pipeline – GitHub Actions + Docker
 
-Liten Node.js-app (ingen npm-dependency) som testas, byggs till en Docker-image och deployas automatiskt.
+[![CI](https://github.com/sxnonum/CICDPIPELINE/actions/workflows/ci.yml/badge.svg)](https://github.com/sxnonum/CICDPIPELINE/actions/workflows/ci.yml)
+[![CD](https://github.com/sxnonum/CICDPIPELINE/actions/workflows/deploy.yml/badge.svg)](https://github.com/sxnonum/CICDPIPELINE/actions/workflows/deploy.yml)
 
-## Flöde
-| Workflow | Trigger | Steg |
+En pipeline som automatiskt testar, bygger och levererar en liten Node.js-app som Docker-image.
+Appen är medvetet enkel (inga beroenden) – fokus ligger på automatiseringen.
+
+## Pipeline
+
+```
+PR / push (andra branscher)         push till main
+        │                                  │
+   ┌────▼────┐                        ┌────▼────┐
+   │  Test   │                        │  Test   │
+   └────┬────┘                        └────┬────┘
+┌───────▼────────┐                  ┌──────▼───────┐
+│ Docker build + │                  │ Build & push │──► ghcr.io (latest + commit-SHA)
+│ smoke test     │                  └──────┬───────┘
+└────────────────┘                  ┌──────▼───────┐
+                                    │ Deploy (SSH) │  valfritt
+                                    └──────────────┘
+```
+
+| Workflow | Trigger | Vad den gör |
 |---|---|---|
-| `ci.yml` | PR / push till annan branch än `main` | tester → Docker-build + smoke test (`/health`) |
-| `deploy.yml` | push till `main` | tester → build & push till GHCR → SSH-deploy |
+| [`ci.yml`](.github/workflows/ci.yml) | PR, push till andra branscher än `main` | Kör tester, bygger imagen och startar containern för ett smoke test mot `/health` |
+| [`deploy.yml`](.github/workflows/deploy.yml) | push till `main` | Kör tester, publicerar imagen till GitHub Container Registry, deployar via SSH om `DEPLOY_ENABLED=true` |
 
-## Lokalt
+## Tekniska val
+- **Tester** med inbyggda `node:test` – inga extra beroenden, snabb pipeline.
+- **Docker**: `node:20-alpine`, körs som icke-root-användare, har `HEALTHCHECK`.
+- **Spårbarhet**: varje image taggas med commit-SHA och får den som `APP_VERSION` (syns på `/`).
+- **Cache** av Docker-lager via GitHub Actions cache.
+- **Concurrency-lås** så att två deployer aldrig körs samtidigt.
+- **Minsta möjliga rättigheter** (`permissions`) per jobb.
+
+## Kör lokalt
 ```
 npm test
 docker build -t app . && docker run -p 3000:3000 app
+curl localhost:3000/health
 ```
 
-## Secrets (Settings → Secrets → Actions) för deploy-steget
-- `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY` – servern med Docker installerat
-- `GHCR_PULL_USER`, `GHCR_PULL_TOKEN` – PAT med `read:packages` så servern kan hämta imagen
-
-Skapa även en Environment `production` (valfritt: kräv manuell approval).
+## Aktivera SSH-deploy (valfritt)
+Sätt repo-variabeln `DEPLOY_ENABLED=true` och secrets `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`,
+`GHCR_PULL_USER`, `GHCR_PULL_TOKEN`. Skapa även en Environment `production`.
