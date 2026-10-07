@@ -4,10 +4,17 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      # Håll oss på LTS-versioner av Node (jämna major-versioner uppdateras manuellt)
+      - dependency-name: node
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: npm
     directory: /
     schedule:
